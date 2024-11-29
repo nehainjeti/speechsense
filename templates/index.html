@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeechSense</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Dark theme styling */
+        body {
+            background-color: #2c2f33;
+            color: #ffffff;
+        }
+        h1 {
+            color: #7289da;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            color: #99aab5;
+        }
+        .form-control, .form-control-file {
+            background-color: #23272a;
+            color: #ffffff;
+            border: 1px solid #7289da;
+        }
+        .form-control::placeholder {
+            color: #99aab5;
+        }
+        .btn-primary {
+            background-color: #7289da;
+            border-color: #7289da;
+        }
+        .btn-primary:hover {
+            background-color: #5b6eae;
+            border-color: #5b6eae;
+        }
+        .mt-4 h3 {
+            color: #7289da;
+        }
+        .btn-success, .btn-danger, .btn-warning {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .form-text {
+            color: #99aab5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">SpeechSense</h1>
+        
+        <!-- Main form for both text input and PDF upload -->
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="text">Enter Text:</label>
+                <textarea class="form-control" name="text" id="text" rows="4" maxlength="5000" placeholder="Type your text here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="pdf_file">Or Upload PDF:</label>
+                <input type="file" class="form-control-file" name="pdf_file" id="pdf_file" accept="application/pdf">
+                <small class="form-text">Upload a PDF file to analyze its content for hate speech and sentiment.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Analyze</button>
+        </form>
+
+        <!-- Display analysis results if they exist -->
+        {% if result %}
+        <div class="mt-4">
+            <h3>Analysis Results:</h3>
+            <p><strong>Hate Speech Result:</strong> {{ result.hs_result }} ({{ result.hs_prob }}%)</p>
+            <p><strong>Sentiment Result:</strong> {{ result.sent_result }} ({{ result.sent_prob }}%)</p>
+        </div>
+
+        <!-- Feedback form for both hate speech and sentiment predictions -->
+        <form action="/feedback" method="post" class="mt-4">
+            <input type="hidden" name="text" value="{{ text }}">
+            <input type="hidden" name="hs_result" value="{{ result.hs_result }}">
+            <input type="hidden" name="sent_result" value="{{ result.sent_result }}">
+
+            <div class="form-group">
+                <label for="hs_feedback"><strong>Hate Speech Feedback:</strong> How accurate was the hate speech prediction?</label>
+                <select class="form-control" id="hs_feedback" name="hs_feedback">
+                    <option value="correct">Correct Prediction</option>
+                    <option value="false_positive">False Positive</option>
+                    <option value="false_negative">False Negative</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sent_feedback"><strong>Sentiment Feedback:</strong> How accurate was the sentiment prediction?</label>
+                <select class="form-control" id="sent_feedback" name="sent_feedback">
+                    <option value="correct">Correct Prediction</option>
+                    <option value="false_positive">False Positive</option>
+                    <option value="false_negative">False Negative</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+        </form>
+
+        <!-- Display feedback submission message if it exists -->
+        {% if feedback_message %}
+        <div class="alert alert-info mt-3">
+            {{ feedback_message }}
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
